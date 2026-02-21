@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>SAPD - GTA Zone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #061a06, #0f3d0f);
+      color: white;
+      text-align: center;
+    }
+
+    header {
+      background-color: #0a2e0a;
+      padding: 15px;
+      box-shadow: 0 0 15px #00ff00;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: bold;
+      color: #00ff00;
+    }
+
+    .sub {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .container {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .button {
+      background-color: #145214;
+      border: none;
+      padding: 15px;
+      font-size: 18px;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 0 10px #00ff00;
+    }
+
+    .button:hover {
+      background-color: #1f7a1f;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #00ff00;
+    }
+
+    #contenido {
+      display: none;
+      padding: 20px;
+      max-width: 800px;
+      margin: 20px auto;
+      background: #0a2e0a;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00ff00;
+      text-align: left;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .guardar {
+      background: #00aa00;
+      border: none;
+      padding: 10px;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    footer {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #0a2e0a;
+      font-size: 14px;
+    }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🚔 SAPD GTA Zone</div>
+  <div class="sub">Panel Oficial del Departamento de Policía</div>
+</header>
+
+<div class="container">
+
+<button class="button" onclick="mostrarSeccion('calendario')">📅 Calendario</button>
+<button class="button" onclick="mostrarSeccion('uniformes')">👮 Uniformes</button>
+<button class="button" onclick="mostrarSeccion('licencias')">🪪 Licencias</button>
+<button class="button" onclick="mostrarSeccion('penal')">📋 Código Penal</button>
+<button class="button" onclick="mostrarSeccion('codigos')">🚨 Códigos</button>
+<button class="button" onclick="mostrarSeccion('reportes')">📝 Reportes</button>
+<button class="button" onclick="mostrarSeccion('verReportes')">📂 Ver Reportes</button>
+<button class="button" onclick="mostrarSeccion('oficiales')">🚓 Oficiales</button>
+<button class="button" onclick="mostrarSeccion('admin')">⚙️ Panel Admin</button>
+
+</div>
+
+<div id="contenido"></div>
+
+<footer>
+GTA Zone RP © 2026 - SAPD System
+</footer>
+
+<script>
+
+let oficiales = JSON.parse(localStorage.getItem("oficiales")) || [];
+let reportes = JSON.parse(localStorage.getItem("reportes")) || [];
+
+function mostrarSeccion(sec) {
+
+const contenido = document.getElementById("contenido");
+contenido.style.display = "block";
+
+const secciones = {
+
+calendario: `<h2>Calendario</h2><p>Sin eventos actualmente.</p>`,
+
+uniformes: `<h2>Uniformes</h2>
+<ul>
+<li>Cadete</li>
+<li>Oficial</li>
+<li>Sargento</li>
+<li>Teniente</li>
+<li>Capitán</li>
+<li>Comandante</li>
+</ul>`,
+
+licencias: `<h2>Licencias</h2>
+<ul>
+<li>Conducir</li>
+<li>Armas</li>
+<li>Especial</li>
+</ul>`,
+
+penal: `<h2>Código Penal</h2>
+<ul>
+<li>Conducción temeraria - $500</li>
+<li>Fuga policial - $2000</li>
+<li>Robo - $5000</li>
+<li>Arma ilegal - $3000</li>
+</ul>`,
+
+codigos: `<h2>Códigos</h2>
+<ul>
+<li>10-4 Confirmado</li>
+<li>10-20 Ubicación</li>
+<li>10-99 Emergencia</li>
+</ul>`,
+
+reportes: `<h2>Crear Reporte</h2>
+<input id="nombre" placeholder="Nombre del oficial">
+<textarea id="texto" placeholder="Escribe el reporte"></textarea>
+<button class="guardar" onclick="guardarReporte()">Guardar</button>`,
+
+verReportes: `<h2>Reportes Guardados</h2>` + reportes.map(r => `<p><b>${r.nombre}</b>: ${r.texto}</p>`).join(""),
+
+oficiales: `<h2>Oficiales</h2>` + (oficiales.length ? oficiales.map(o=>`<p>${o}</p>`).join("") : "<p>No hay oficiales aún.</p>"),
+
+admin: `<h2>Panel Admin</h2>
+<input id="nuevoOficial" placeholder="Nombre del oficial">
+<button class="guardar" onclick="agregarOficial()">Agregar Oficial</button>`
+
+};
+
+contenido.innerHTML = secciones[sec];
+}
+
+function agregarOficial() {
+
+const nombre = document.getElementById("nuevoOficial").value;
+if(!nombre) return;
+
+oficiales.push(nombre);
+localStorage.setItem("oficiales", JSON.stringify(oficiales));
+alert("Oficial agregado");
+
+}
+
+function guardarReporte() {
+
+const nombre = document.getElementById("nombre").value;
+const texto = document.getElementById("texto").value;
+
+if(!nombre || !texto) return;
+
+reportes.push({nombre, texto});
+localStorage.setItem("reportes", JSON.stringify(reportes));
+
+alert("Reporte guardado");
+
+}
+
+</script>
+
+</body>
+</html>
